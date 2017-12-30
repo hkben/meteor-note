@@ -1,0 +1,52 @@
+/* CSS declarations go here */
+
+html , body , .container , #render-target{
+height: 100%;
+}
+
+
+content {
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+}
+
+textarea {
+  width: 99%;
+  height: 100%;
+  resize: none;
+  border: 0;
+  overflow: hidden;
+  white-space: pre-wrap;
+}
+
+textarea:focus {
+  outline: 0;
+  /* Chrome */
+}
+
+.edit-panel, .preview-panel {
+  width: 50%;
+  height: 100%;
+  white-space: pre;
+  word-wrap: normal;
+      padding: 10px;
+}
+
+.edit-panel {
+  overflow: hidden;
+}
+
+header {
+  height: auto;
+}
+
+.preview-panel{
+      background-color: #eee;
+}
+
+.preview-panel p{
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 { margin: 0;}
