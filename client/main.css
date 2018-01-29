@@ -79,11 +79,16 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   position: fixed;
   bottom: 0;
+  padding-bottom: 10px;
   /* background-color:red; */
 }
 
+#bottombar .ui{
+  margin-right: 20px;
+}
+
 #notecontent{
-  height: calc(100% - 84px);
+  height: calc(100% - 90px);
 }
 
 span {

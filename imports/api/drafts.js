@@ -25,11 +25,12 @@ Meteor.methods( {
 
     let id = Drafts.insert( {
       text: "",
+      tags: [],
       changeAt: new Date(),
       createdAt: new Date()
     } );
 
-    return id;
+    // return id;
   },
 
   'drafts.update' ( objId, text ) {
@@ -56,8 +57,26 @@ Meteor.methods( {
     Drafts.remove( objId );
   },
 
+  'drafts.addTag' ( objId , tag ) {
+    // check( objId, String );
+    // check( tag, String );
 
+    Drafts.update( objId, {
+      $push: {
+        tags: tag
+      }
+    } );
+  },
 
+  'drafts.removeTag' ( objId , tag ) {
+    // check( objId, String );
+    // check( tag, String );
 
+    Drafts.update( objId, {
+      $pull: {
+        tags: tag
+      }
+    } );
+  },
 
 } );

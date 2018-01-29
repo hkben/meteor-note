@@ -86,21 +86,65 @@ class App extends React.Component {
   addDraft() {
     let id = new ReactiveVar();
 
-    Meteor.call( 'drafts.insert', function( error, result ) {
-      id.set( result );
-    } );
+    Meteor.call( 'drafts.insert' );
 
     this.state.init = true;
 
-    this.setState( {
-      draftsID: id.get()
-    } );
+    // this.setState( {
+    //   draftsID: id.get()
+    // } );
   };
 
   deleteDraft() {
     Meteor.call( 'drafts.remove', this.state.draftsID );
 
     this.state.init = true;
+  };
+
+  renderTagBar() {
+    if ( this.state.draftsID ) {
+      return (
+        <div>
+          <div class="ui icon input">
+            <input placeholder="Tags..." type="text" onKeyPress={this.addTag.bind(this)} />
+            <i class="tags icon"></i>
+          </div>
+          {this.renderTags()}
+        </div>
+      );
+    }
+  };
+
+  renderTags() {
+
+    let draft = Drafts.findOne( {
+      _id: this.state.draftsID
+    } );
+
+    return draft.tags.map((tag) => {
+
+      return (
+        <a class="ui tag label">
+          {tag}
+          <i class="delete icon" value={tag} onClick={this.removeTag.bind(this, tag)}></i>
+        </a>
+      );
+    });
+  };
+
+  addTag( event ) {
+    if ( event.key === 'Enter' ) {
+      event.preventDefault();
+
+      if(!event.target.value){ return false; }
+
+      Meteor.call( 'drafts.addTag', this.state.draftsID , event.target.value );
+      event.target.value = "";
+    }
+  };
+
+  removeTag(tag) {
+      Meteor.call( 'drafts.removeTag', this.state.draftsID  , tag );
   };
 
   render() {
@@ -155,14 +199,10 @@ class App extends React.Component {
               {this.renderEditor()}
             </div>
 
-            <div id="bottombar" class="ui secondary menu inverted">
-              <div class="item">
-                <div class="ui icon input">
-                  <input placeholder="Tags..." type="text"/>
-                  <i class="tags icon"></i>
-                </div>
-              </div>
+            <div id="bottombar">
+              {this.renderTagBar()}
             </div>
+
           </div>
         </div>
     );
