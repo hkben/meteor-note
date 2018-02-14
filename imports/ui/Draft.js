@@ -18,24 +18,39 @@ export default class Task extends Component {
   //   Meteor.call('tasks.setPrivate', this.props.task._id, ! this.props.task.private);
   // }
 
+  constructor( props ) {
+    super( props );
+    this.state = {
+      draft: null
+    };
+  }
+
+  componentWillMount() {
+    let target_draft = Drafts.findOne( this.props.id );
+    this.state.draft = target_draft;
+    // console.log(target_draft);
+  }
+
   openDraft(){
       this.props.callback(this.props.id);
   }
 
-  getTitle( string ) {
+  getTitle() {
+    let content = this.state.draft.text;
 
-    let title = string.split( '\n' )[ 0 ];
+    let title = content.split( '\n' )[ 0 ];
 
-    title = title? title : "<Empty>";
+    title = title ? title : "< Empty >";
 
     return title;
   }
 
 
   render() {
+
       return (
         <a class="item" onClick={this.openDraft.bind(this)}>
-          { !this.props.content? ( "<Empty>" ) : this.getTitle(this.props.content) }
+          { this.getTitle() }
         </a>
       );
     }

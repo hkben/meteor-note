@@ -50,9 +50,7 @@ export default class CustomEditor extends React.Component {
 
       if ( _draftsID != this.state.draftsID && _draftsID ) {
 
-        let draft = Drafts.findOne( {
-          _id: _draftsID
-        } );
+        let draft = Drafts.findOne( _draftsID , { fields: { text: 1 } } );
 
         this.state.draftsID = _draftsID;
 

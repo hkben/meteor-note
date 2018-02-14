@@ -76,7 +76,6 @@ class App extends React.Component {
         <Draft
           key={draft._id}
           id={draft._id}
-          content={draft.text}
           callback={this.openDraft.bind(this)}
         />
       );
@@ -232,7 +231,7 @@ class App extends React.Component {
 // Lazy Load
 export default withTracker(() => {
   return {
-    drafts: Drafts.find({ pinned: false }, { sort: { createdAt: -1 } }).fetch(),
-    pinned: Drafts.find({ pinned: true }, { sort: { createdAt: -1 } }).fetch(),
+    drafts: Drafts.find({ pinned: false }, { fields: { _id: 1 } , sort: { createdAt: -1 } }).fetch(),
+    pinned: Drafts.find({ pinned: true }, { fields: { _id: 1 } , sort: { createdAt: -1 } }).fetch(),
   };
 })(App);
