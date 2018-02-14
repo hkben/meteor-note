@@ -16,15 +16,18 @@ class App extends React.Component {
       // text: null,
       // preview: null,
       // viewMode: 0,
-      draftsID: null,
+      draftsID: null,  // todo : Change name?
       init: true,
+      note: null
     };
   }
 
   componentWillReceiveProps( props ) {
     let lastDraft = props.drafts[ 0 ];
 
-    console.log(lastDraft);
+    if(!lastDraft){
+      lastDraft = props.pinned[ 0 ];
+    }
 
     if ( !lastDraft ) {
       this.setState( {
@@ -46,7 +49,7 @@ class App extends React.Component {
     }
   }
 
-  openDraft( draftsID ) {
+  openDraft( draftsID ) { // Open and Get Note Object from DB
 
     this.setState( {
       draftsID: draftsID
@@ -54,8 +57,14 @@ class App extends React.Component {
 
   }
 
-  renderTasks() {
-    let drafts = this.props.drafts;
+  renderTasks(pinned) {
+    let drafts;
+
+    if(pinned){
+      drafts = this.props.pinned;
+    }else {
+      drafts = this.props.drafts;
+    }
 
     if(!drafts){return false;}
 
@@ -99,6 +108,10 @@ class App extends React.Component {
     Meteor.call( 'drafts.remove', this.state.draftsID );
 
     this.state.init = true;
+  };
+
+  pinDraft() {
+    Meteor.call( 'drafts.pin', this.state.draftsID );
   };
 
   renderTagBar() {
@@ -159,16 +172,16 @@ class App extends React.Component {
               <button class="ui primary button" onClick={this.addDraft.bind(this)} >Add</button>
             </div>
             <div class="header item">Sort By</div>
-            <div class="header item">Pinned</div>
-                {/*<li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>*/}
+            <div class="header item">
+              <div class="ui teal label">{this.props.pinned.length}</div>
+              Pinned
+            </div>
+            {this.renderTasks(true)}
             <div class="header item">Others</div>
                 {/*}<li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">test</a></li>*/}
-            {this.renderTasks()}
+            {this.renderTasks(false)}
           </div>
 
           <div id="leftside" class="thirteen wide column">
@@ -188,6 +201,12 @@ class App extends React.Component {
               <a class="item" onClick={this.deleteDraft.bind(this)}>
                 Delete This!
               </a>
+
+              <a class="item" onClick={this.pinDraft.bind(this)}>
+                Pin This!
+              </a>
+
+
               <div class="right menu">
                 <a class="ui item">
                   Logout
@@ -210,9 +229,10 @@ class App extends React.Component {
 
 }
 
-
+// Lazy Load
 export default withTracker(() => {
   return {
-    drafts: Drafts.find({}, { sort: { createdAt: -1 } }).fetch(),
+    drafts: Drafts.find({ pinned: false }, { sort: { createdAt: -1 } }).fetch(),
+    pinned: Drafts.find({ pinned: true }, { sort: { createdAt: -1 } }).fetch(),
   };
 })(App);

@@ -26,6 +26,7 @@ Meteor.methods( {
     let id = Drafts.insert( {
       text: "",
       tags: [],
+      pinned: false,
       changeAt: new Date(),
       createdAt: new Date()
     } );
@@ -55,6 +56,17 @@ Meteor.methods( {
 
   'drafts.remove' ( objId ) {
     Drafts.remove( objId );
+  },
+
+  'drafts.pin' ( objId ) {
+
+    var draft = Drafts.findOne(objId);
+
+    Drafts.update( objId, {
+      $set: {
+        pinned: !draft.pinned
+      }
+    } );
   },
 
   'drafts.addTag' ( objId , tag ) {
