@@ -74,7 +74,7 @@ Meteor.methods( {
     // check( tag, String );
 
     Drafts.update( objId, {
-      $push: {
+      $addToSet: {
         tags: tag
       }
     } );
