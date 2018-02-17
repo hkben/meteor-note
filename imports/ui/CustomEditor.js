@@ -12,6 +12,7 @@ export default class CustomEditor extends React.Component {
 
       this.state = {
         editorState: EditorState.createEmpty(),
+        savedText: null,
         draftsID: null,
       };
 
@@ -23,10 +24,15 @@ export default class CustomEditor extends React.Component {
 
         let text = editorState.getCurrentContent().getPlainText();
 
-        console.log( this.state.draftsID , "AAA" );
+        // console.log( this.state.draftsID , "editorState Changed" );
 
-        if ( this.state.draftsID ) {
+        if ( this.state.draftsID && this.state.savedText != text ) {
           Meteor.call( 'drafts.update', this.state.draftsID, text );
+
+          let title = text.split( '\n' )[ 0 ];
+          title = title ? title : "< Empty >";
+
+          this.props.callback( title );
         }
       };
     }
@@ -54,12 +60,13 @@ export default class CustomEditor extends React.Component {
 
         this.state.draftsID = _draftsID;
 
-        console.log( draft.text );
+        // console.log( draft.text );
 
         let state = draft.text ? EditorState.createWithContent( ContentState.createFromText( draft.text ) ) : EditorState.createEmpty();
 
         this.setState( {
-          editorState: state
+          editorState: state,
+          savedText: draft.text,
         } );
 
       }
